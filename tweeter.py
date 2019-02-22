@@ -1,5 +1,11 @@
-import tweepy
+#!/usr/bin/python3.5
 
+import tweepy
+import os
+from datetime import datetime, timedelta
+
+# Displays tweeters ID based on a search of the name of the tweet.
+# This is over a seven day period and 100 users
 
 consumer_key = '85ENf6nJ6BbAUp21kj0JxHW0l'
 consumer_secret = '8j8gwF64JDNAwEndjKIAUV46X2OrlGWSVbyrh3HUSC5R0TQdgz'
@@ -9,28 +15,26 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
-user = api.me()
-print (user.name)
 
+def idTweet():
+    comment = 'myfirstTweet'
+    numberOfUsers = 100
+    now = datetime.today().now()
+    days = now-timedelta(days=7)
+    now = now.strftime("%Y-%m-%d")
+    prev = days.strftime("%Y-%m-%d")
+    print('For the last 7 days these were the top 100 tweets labeled '
+          + comment + ' by: \n')
+    for tweet in tweepy.Cursor(api.search, comment,
+                               since=prev,
+                               until=now
+                               ).items(numberOfUsers):
+        print('@' + tweet.user.screen_name)
 
-def retweet():
-    search = ('#myfirstTweet')
-    for tweet in tweepy.Cursor(api.search, search).items(1):
-        try:
-            api.retweet(tweet)
-            
-            print('@First tweet has been auto retweeted')
-        except tweepy.TweepError as e:
-            print(e.reason)
-        except StopIteration:
-            break
 
 def main():
-    retweet()
+    idTweet()
 
-    
+
 if __name__ == "__main__":
     main()
-
-
-
